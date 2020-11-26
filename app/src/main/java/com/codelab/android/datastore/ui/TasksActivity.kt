@@ -17,6 +17,7 @@
 package com.codelab.android.datastore.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
@@ -33,20 +34,21 @@ class TasksActivity : AppCompatActivity() {
 
     private lateinit var viewModel: TasksViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
         super.onCreate(savedInstanceState)
         binding = ActivityTasksBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
 
-        viewModel = ViewModelProvider(
-            this,
-            TasksViewModelFactory(TasksRepository, UserPreferencesRepository.getInstance(this))
-        ).get(TasksViewModel::class.java)
+        viewModel = ViewModelProvider(this, TasksViewModelFactory(TasksRepository, UserPreferencesRepository.getInstance(this))).get(TasksViewModel::class.java)
 
         setupRecyclerView()
         setupFilterListeners(viewModel)
         setupSort()
+
+        viewModel.increaseCounter(binding.textViewCounter.text.toString().toInt()+1)
+
 
         viewModel.tasksUiModel.observe(owner = this) { tasksUiModel ->
             adapter.submitList(tasksUiModel.tasks)
@@ -54,6 +56,8 @@ class TasksActivity : AppCompatActivity() {
             binding.showCompletedSwitch.isChecked = tasksUiModel.showCompleted
         }
     }
+
+
 
     private fun setupFilterListeners(viewModel: TasksViewModel) {
         binding.showCompletedSwitch.setOnCheckedChangeListener { _, checked ->
@@ -69,19 +73,20 @@ class TasksActivity : AppCompatActivity() {
         binding.list.adapter = adapter
     }
 
+    private fun setupCounter(viewModel: TasksViewModel)
+    {
+        binding.textViewCounter.setOnEditorActionListener{viewModel.increaseCounter(v)}
+    }
+
     private fun setupSort() {
-        binding.sortDeadline.setOnCheckedChangeListener { _, checked ->
-            viewModel.enableSortByDeadline(checked)
+        binding.sortDeadline.setOnCheckedChangeListener { _, checked -> viewModel.enableSortByDeadline(checked)
         }
-        binding.sortPriority.setOnCheckedChangeListener { _, checked ->
-            viewModel.enableSortByPriority(checked)
+        binding.sortPriority.setOnCheckedChangeListener { _, checked -> viewModel.enableSortByPriority(checked)
         }
     }
 
     private fun updateSort(sortOrder: SortOrder) {
-        binding.sortDeadline.isChecked =
-            sortOrder == SortOrder.BY_DEADLINE || sortOrder == SortOrder.BY_DEADLINE_AND_PRIORITY
-        binding.sortPriority.isChecked =
-            sortOrder == SortOrder.BY_PRIORITY || sortOrder == SortOrder.BY_DEADLINE_AND_PRIORITY
+        binding.sortDeadline.isChecked = sortOrder == SortOrder.BY_DEADLINE || sortOrder == SortOrder.BY_DEADLINE_AND_PRIORITY
+        binding.sortPriority.isChecked = sortOrder == SortOrder.BY_PRIORITY || sortOrder == SortOrder.BY_DEADLINE_AND_PRIORITY
     }
 }

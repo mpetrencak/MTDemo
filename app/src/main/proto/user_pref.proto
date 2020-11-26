@@ -16,6 +16,8 @@ message UserPreferences {
     BY_DEADLINE_AND_PRIORITY = 4;
   }
 
+  int32 counter = 3;
+
   // user selected tasks sorting order
   SortOrder sort_order = 2;
 

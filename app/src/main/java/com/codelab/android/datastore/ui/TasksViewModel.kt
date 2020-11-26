@@ -30,45 +30,70 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 data class TasksUiModel(
+    val counter: Int,
     val tasks: List<Task>,
     val showCompleted: Boolean,
     val sortOrder: SortOrder
 )
 
 // MutableStateFlow is an experimental API so we're annotating the class accordingly
-class TasksViewModel(
-    repository: TasksRepository,
-    private val userPreferencesRepository: UserPreferencesRepository
-) : ViewModel() {
-
+class TasksViewModel(repository: TasksRepository, private val userPreferencesRepository: UserPreferencesRepository) : ViewModel()
+{
     private val userPreferencesFlow = userPreferencesRepository.userPreferencesFlow
-
-
 
     // Every time the sort order, the show completed filter or the list of tasks emit,
     // we should recreate the list of tasks
-    private val tasksUiModelFlow = combine(
-        repository.tasks,
-        userPreferencesFlow
-    ) { tasks: List<Task>, userPreferences: UserPreferences ->
-        return@combine TasksUiModel(
-            tasks = filterSortTasks(
-                tasks,
-                userPreferences.showCompleted,
-                userPreferences.sortOrder
-            ),
-            showCompleted = userPreferences.showCompleted,
-            sortOrder = userPreferences.sortOrder
-        )
+    private val tasksUiModelFlow = combine(repository.tasks, userPreferencesFlow)
+    {
+            tasks: List<Task>, userPreferences: UserPreferences ->
+        return@combine TasksUiModel(tasks = filterSortTasks(tasks, userPreferences.showCompleted,userPreferences.sortOrder), showCompleted = userPreferences.showCompleted, sortOrder = userPreferences.sortOrder,counter = userPreferences.counter)
     }
     val tasksUiModel = tasksUiModelFlow.asLiveData()
 
 
-    private fun filterSortTasks(
-        tasks: List<Task>,
-        showCompleted: Boolean,
-        sortOrder: SortOrder
-    ): List<Task> {
+
+    fun showCompletedTasks(show: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.updateShowCompleted(show)
+        }
+    }
+
+
+
+     fun increaseCounter(counter: Int)
+    {
+        viewModelScope.launch { userPreferencesRepository.updateCounter(counter) }
+
+        /*
+        var test = binding.textViewCounter.text.toString()
+        //Log.v("KokotinaPred",binding.textViewCounter.text.toString())
+        var test2 = test.toInt()
+
+
+        test2++
+
+        binding.textViewCounter.text =test2.toString()
+
+        //Log.v("KokotinaPo",binding.textViewCounter.text.toString())
+        //Log.v("Kokotina",test2.toString())
+
+         */
+
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+    private fun filterSortTasks(tasks: List<Task>, showCompleted: Boolean, sortOrder: SortOrder): List<Task>
+    {
         // filter the tasks
         val filteredTasks = if (showCompleted) {
             tasks
@@ -89,11 +114,7 @@ class TasksViewModel(
         }
     }
 
-    fun showCompletedTasks(show: Boolean) {
-        viewModelScope.launch {
-            userPreferencesRepository.updateShowCompleted(show)
-        }
-    }
+
 
     fun enableSortByDeadline(enable: Boolean) {
         viewModelScope.launch {
