@@ -60,32 +60,9 @@ class TasksViewModel(repository: TasksRepository, private val userPreferencesRep
 
 
 
-     fun increaseCounter(counter: Int)
+     fun showCounter(counter: Int)
     {
         viewModelScope.launch { userPreferencesRepository.updateCounter(counter) }
-
-        /*
-        var test = binding.textViewCounter.text.toString()
-        //Log.v("KokotinaPred",binding.textViewCounter.text.toString())
-        var test2 = test.toInt()
-
-
-        test2++
-
-        binding.textViewCounter.text =test2.toString()
-
-        //Log.v("KokotinaPo",binding.textViewCounter.text.toString())
-        //Log.v("Kokotina",test2.toString())
-
-         */
-
-
-
-
-
-
-
-
 
     }
 

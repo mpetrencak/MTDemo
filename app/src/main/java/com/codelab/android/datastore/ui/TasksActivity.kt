@@ -43,11 +43,15 @@ class TasksActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this, TasksViewModelFactory(TasksRepository, UserPreferencesRepository.getInstance(this))).get(TasksViewModel::class.java)
 
+
         setupRecyclerView()
         setupFilterListeners(viewModel)
         setupSort()
+        setupCounter(viewModel)
 
-        viewModel.increaseCounter(binding.textViewCounter.text.toString().toInt()+1)
+
+
+        binding.textViewCounter.text = "10";
 
 
         viewModel.tasksUiModel.observe(owner = this) { tasksUiModel ->
@@ -75,7 +79,9 @@ class TasksActivity : AppCompatActivity() {
 
     private fun setupCounter(viewModel: TasksViewModel)
     {
-        binding.textViewCounter.setOnEditorActionListener{viewModel.increaseCounter(v)}
+        viewModel.co
+
+
     }
 
     private fun setupSort() {
