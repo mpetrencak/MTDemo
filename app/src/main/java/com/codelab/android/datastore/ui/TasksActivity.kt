@@ -47,19 +47,23 @@ class TasksActivity : AppCompatActivity() {
         setupRecyclerView()
         setupFilterListeners(viewModel)
         setupSort()
-        setupCounter(viewModel)
+        viewModel.showCounter()
 
 
 
-        binding.textViewCounter.text = "10";
+
+
+
 
 
         viewModel.tasksUiModel.observe(owner = this) { tasksUiModel ->
             adapter.submitList(tasksUiModel.tasks)
             updateSort(tasksUiModel.sortOrder)
             binding.showCompletedSwitch.isChecked = tasksUiModel.showCompleted
+            binding.textViewCounter.text = tasksUiModel.counter.toString()
         }
     }
+
 
 
 
@@ -77,12 +81,6 @@ class TasksActivity : AppCompatActivity() {
         binding.list.adapter = adapter
     }
 
-    private fun setupCounter(viewModel: TasksViewModel)
-    {
-        viewModel.co
-
-
-    }
 
     private fun setupSort() {
         binding.sortDeadline.setOnCheckedChangeListener { _, checked -> viewModel.enableSortByDeadline(checked)

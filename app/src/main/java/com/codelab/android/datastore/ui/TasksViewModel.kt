@@ -60,9 +60,9 @@ class TasksViewModel(repository: TasksRepository, private val userPreferencesRep
 
 
 
-     fun showCounter(counter: Int)
+     fun showCounter()
     {
-        viewModelScope.launch { userPreferencesRepository.updateCounter(counter) }
+        viewModelScope.launch { userPreferencesRepository.updateCounter() }
 
     }
 
